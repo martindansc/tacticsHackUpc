@@ -1,8 +1,10 @@
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
 var bodyParser = require('body-parser');
+var io = require('socket.io')(http);
+
+var state = require('state');
 
 app.set('views', __dirname + "/views");
 app.engine('html', require('ejs').renderFile);
@@ -24,10 +26,19 @@ app.get('/', function(req, res){
 
 //IO
 io.on('connection', function(socket){
-   
-	//Hello
-	socket.on('Hello', function(msg){
-		io.emit('Hello', '');
-	});
 	
+	var id = socket.id;
+   
+	//Get the user input
+	socket.on('addUserInput', function(obj){
+		obj.playerId = id;
+		state.setUserInput(obj);
+	});
+
+	//Add connection
+	// {numPlayer : 'num'}
+	var newPlayer = state.addNewPlayer(id);
+	//Send new player connection
+	socket.send(newPlayer);
+
 });
