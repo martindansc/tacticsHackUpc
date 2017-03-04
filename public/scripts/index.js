@@ -5,20 +5,21 @@ var myClass;
 //init
 var socket = io();
 
-socket.on('id', function(id){
-    myId = id;
+socket.on('connect', function() {
+  console.log('My id: ' + socket.io.engine.id);
+  myId = socket.io.engine.id;
 });
 
 socket.on('state', function(obj){
-    console.log(myId);
     console.log(obj);
 
-    var playerState = obj.state;
-    var globalState = obj.currentLocation;
+    var state = obj.state;
+    var location = obj.currentLocation;
 
-    $('#CharacterHeader').text(playerState[myId].type);
-    //$('#Health').text("Health: " + state.id.)
-    //$('#Level')
+    $('#CharacterHeader').text("Character: " + state[myId].type);
+    $('#Health').text("Health: " + state[myId].health);
+    $('#Level').text("Level: " + state[myId].lv);
+    document.getElementById("skill1").src="images/"+state[myId].type+".png";
 });
 
 //state
