@@ -40,6 +40,5 @@ io.on('connection', function(socket){
 
 	//Add connection
 	var newPlayer = state.addNewPlayer(id);
-	socket.emit('setId', id);
 
 });
