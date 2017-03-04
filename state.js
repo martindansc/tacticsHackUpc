@@ -1,5 +1,22 @@
 var info = require('./info').info;
 
+
+var newPlayerType = function(){
+    var available = ["paladin", "mage", "thief", "samurai"];
+    var toRemove = [];
+    //Afegeixes a toRemove els types ja pillats
+    for (var id in state){
+        if (state.hasOwnProperty[id]){
+            toRemove.push(state[id].type); 
+        }
+    }
+    //Elimines types pillats de available
+    available = available.filter(function(x) { return toRemove.indexOf(x) < 0});
+    //Tipus random dels available que quedin
+    var selectedType = available[Math.floor((Math.random() * available.length) + 1)];
+    return selectedType; 
+}
+
 var currentLocation = {};
 var state = {};
 var userInputs = {};
@@ -25,7 +42,14 @@ var startGame = function() {
 }
 
 var setUserInput = function(obj) {
-
+    var id = obj.id;
+    var attack = obj.attack;
+    if (attack % 1 === 0) { //attack is a card
+        userInputs[id].numAttack = attack;
+    }
+    else { //attack is spell
+        userInputs[id].spell = attack;
+    }
 }
 
 var addNewPlayer = function(obj) {
