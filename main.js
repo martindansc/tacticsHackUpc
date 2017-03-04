@@ -25,7 +25,7 @@ io.on('connection', function(socket){
    
 	//Get the user input
 	socket.on('addUserInput', function(obj){
-		obj.playerId = id;
+		obj.id = id;
 		state.setUserInput(obj);
 	});
 

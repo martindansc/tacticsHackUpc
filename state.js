@@ -13,7 +13,7 @@ var setIo = function(newIo) {
 }
 
 var sendState = function() {
-    io.send('state', {state : state, currentLocation : currentLocation});
+    io.emit('state', {state : state, currentLocation : currentLocation});
 }
 
 var newPlayerType = function(){
@@ -33,20 +33,22 @@ var newPlayerType = function(){
     });
 
     //Random available
-    var selectedType = available[Math.floor((Math.random() * available.length) + 1)];
+    var rand = Math.floor((Math.random() * available.length));
+    if(rand > 3) console.error(rand);
+    var selectedType = available[rand];
     return selectedType; 
 }
 
 var calculateCombat = function(){
     var totalDamage = 0;
-    var fighters = JSON.parse(JSON.stringify(userInputObj));
+    var fighters = JSON.parse(JSON.stringify(userInputs));
 
     //remove not participating players in case of mimic
     if (currentLocation.event.type == "trap"){
         var notParticipating = [];
-        for (var id in userInputObj){
-            if (userInputObj.hasOwnProperty[id]){
-                if (userInputObj[id].numAttack == 0) notParticipating.push(id);
+        for (var id in userInputs){
+            if (userInputs.hasOwnProperty[id]){
+                if (userInputs[id].numAttack == 0) notParticipating.push(id);
             }
         }
         fighters = fighters.filter(function(x) { 
@@ -97,16 +99,16 @@ var calculateCombat = function(){
 
 var calculateTreasure = function(){
     var highestRoll = 0;
-    for (var id in userInputObj){
-        if (userInputObj.hasOwnProperty[id]){
-            if (userInputObj[id].numAttack > highestRoll) highestRoll = userInputObj[id].numAttack;
+    for (var id in userInputs){
+        if (userInputs.hasOwnProperty[id]){
+            if (userInputs[id].numAttack > highestRoll) highestRoll = userInputs[id].numAttack;
         }
     }
     //room has a level reward
     if (currentLocation.type == "reward"){
-        for (var id in userInputObj){
-            if (userInputObj.hasOwnProperty[id]){
-                if (userInputObj[id].numAttack == highestRoll) {
+        for (var id in userInputs){
+            if (userInputs.hasOwnProperty[id]){
+                if (userInputs[id].numAttack == highestRoll) {
                     state[id].lv += currentLocation.event.lv;
                 }
             }
@@ -114,9 +116,9 @@ var calculateTreasure = function(){
     }
     //healing room
     else if (currentLocation.type == "heal"){
-        for (var id in userInputObj){
-            if (userInputObj.hasOwnProperty[id]){
-                if (userInputObj[id].numAttack == highestRoll) {
+        for (var id in userInputs){
+            if (userInputs.hasOwnProperty[id]){
+                if (userInputs[id].numAttack == highestRoll) {
                     state[id].health = min(state[id].health + currentLocation.lv,
                                             info[state[id].type].health);
                 }
@@ -140,11 +142,10 @@ var sendNewState = function() {
     //remove used attacks from current floor and clear input
     for(var id in userInputs) {
         //spells on cd
-
         state[id].spells[userInputs[id].spell] = false;
         //used cards
         state[id].availableNums = state[id].availableNums.filter(function(x) { 
-            return userInputs[i].numAttack.indexOf(x) < 0;
+            return userInputs[id].numAttack !== x;
         });
         userInputs[id] = {id : id, spell : '', numAttack : -1};
     }
@@ -170,16 +171,16 @@ var sendNewState = function() {
 
 var calculateNewState = function() {
     switch (currentLocation.event.type) {
-        case monster :
+        case "monster" :
             calculateCombat();
             break;
-        case reward :
+        case "reward" :
             calculateTreasure();
             break;
-        case trap :
+        case "trap" :
             calculateCombat();
             break;
-        case heal :
+        case "heal" :
             calculateTreasure();
             break;    
     }
@@ -195,10 +196,22 @@ var resetGame = function() {
 }
 
 var startGame = function() {
-    userInputs = {};
+
+    for(i in userInputs) {
+        userInputs[i] = {id : i, spell : '', numAttack : -1};
+    }
+
     currentLocation = {floor : 0, room : 0, event : eve.generateEvent(1)};
     playing = true;
     sendState();
+}
+
+var checkAllPlayersMoved = function() {
+    for(var i in userInputs) {
+        var input = userInputs[i];
+        if(input.numAttack == -1) return false;
+    }
+    return true;
 }
 
 var setUserInput = function(obj) {
@@ -218,12 +231,8 @@ var setUserInput = function(obj) {
     }
 }
 
-var addNewPlayer = function(obj) {
+var addNewPlayer = function(id) {
 
-    //check that are less than 4 players
-    if(obj) return;
-
-    var id = obj.id;
     var playerType = newPlayerType();
 
     //create new player obj
@@ -238,9 +247,10 @@ var addNewPlayer = function(obj) {
     state[id] = newPlayerObj;
     
     //create user input obj
-    userInputObj[id] = {id : id, spell : '', numAttack : -1};
+    userInputs[id] = {id : id, spell : '', numAttack : -1};
 
-    if(Object.keys(obj).length == 4) {
+    //check that are players
+    if(Object.keys(userInputs).length == 1) {
         startGame();
     }
 }

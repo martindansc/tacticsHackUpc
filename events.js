@@ -16,7 +16,7 @@ var eventGenerator = [
         function : function(floor) {
             return {
                 type : "monster",
-                img : getMonsterImg(monsterImagePaths),
+                img : getMonsterImg(),
                 health : randomWithLv(10,14,floor),
                 attack : randomWithLv(2,4,floor),
                 lv : random(2,3),
@@ -28,7 +28,7 @@ var eventGenerator = [
         function : function(floor) {
             return {
                 type : "trap",
-                img : getMonsterImg(easyImagePaths),
+                img : getMonsterImg(),
                 health : randomWithLv(7,10,floor),
                 attack : randomWithLv(4,7,floor),
                 lv : random(1,2),
@@ -64,12 +64,12 @@ for(var i in eventGenerator) {
 
 var bossFight = function(){
     return {
-                type : "monster",
-                img : getMonsterImg(easyImagePaths),
-                health : randomWithLv(14,17,5),
-                attack : randomWithLv(6,9,5),
-                lv : random(6,8),
-            }
+        type : "monster",
+        img : getMonsterImg(easyImagePaths),
+        health : randomWithLv(14,17,5),
+        attack : randomWithLv(6,9,5),
+        lv : random(6,8),
+    }
 }
 
 
@@ -84,7 +84,7 @@ var generateEvent  = function(floor) {
         if(rand <= eventApperincProb) {
             return eventGenerator[i].function(floor);
         }
-        eventApperincProb -= localApperingProb;
+        localApperingProb -= eventApperincProb;
     }
 
     console.error("No event selected");
