@@ -1,7 +1,20 @@
 var info = require('./info');
 
-var newPlayerType = function(){
 
+var newPlayerType = function(){
+    var available = ["paladin", "mage", "thief", "samurai"];
+    var toRemove = [];
+    //Afegeixes a toRemove els types ja pillats
+    for (var id in state){
+        if (state.hasOwnProperty[id]){
+            toRemove.push(state[id].type); 
+        }
+    }
+    //Elimines types pillats de available
+    available = available.filter(function(x) { return toRemove.indexOf(x) < 0});
+    //Tipus random dels available que quedin
+    var selectedType = available[Math.floor((Math.random() * available.length) + 1)];
+    return selectedType; 
 }
 
 var currentLocation = {};
