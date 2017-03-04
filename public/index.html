@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Great Game</title>
+<style>
+  .header { background-color: DarkTurquoise; }
+  .stats { 
+    background-color: lightcyan;
+    float: left;
+    height: 250px;
+    text-align: center;
+  }
+  .room { 
+    background-color: #eee; 
+  }
+  .warpbody2 {
+    display:table-caption;
+    width:100%;
+  }
+  .habilities { 
+    background-color: lightskyblue; 
+    float: left;
+  }
+  .cards { 
+    background-color: plum; 
+  }
+  .foot { 
+    background-color: DarkTurquoise;
+    height: 30px;
+  }
+</style>
+</head>
+<header>
+  <div class="header" > 
+    <h1>Character X</h1>
+  </div>
+</header>
+
+<body>
+  <div class="warpbody">
+    <div class="warpbody1">
+      <div class="stats" left>
+          <strong>Main Menu</strong><br />
+          <p>Health:</p>
+          <p>Attack:</p>
+          <p>Level:</p>
+      </div>
+      <div align="center" class="room" right>
+        <img alt="Floor 1" style="width:300px;height:250px;" src="https://boardgamegeek.com/camo/0c5442d82bce138cf50ac0736a828b7c7f3dcb0f/687474703a2f2f666330372e64657669616e746172742e6e65742f667334392f692f323030392f3231392f302f302f44756e67656f6e5f526f6f6d5f5f5f4272696467655f446e445f54696c655f62795f62696c6c69616d626162626c652e6a7067" >
+      </div>
+    </div>
+  <div class="warpbody2">
+    <div class="habilities" align="center">
+      <button type="button" onclick="addUserInput('H1')">H1</button> 
+      <button type="button" onclick="addUserInput('H2')">H2</button> 
+      <button type="button" onclick="addUserInput('H3')">H3</button> 
+    </div>
+    <div lass="cards" align="center">
+      <button type="button" onclick="addUserInput('C1')">C1</button>
+      <button type="button" onclick="addUserInput('C2')">C2</button>
+      <button type="button" onclick="addUserInput('C3')">C3</button>
+      <button type="button" onclick="addUserInput('C4')">C4</button>
+      <button type="button" onclick="addUserInput('C5')">C5</button>
+      </div>
+  </div>
+</div>
+</body>
+
+<footer>
+  <div class="foot"><center>HackathonUPC</center></div>
+</footer>
+</html>
