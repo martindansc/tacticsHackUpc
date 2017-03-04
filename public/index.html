@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Great Game</title>
+<style>
+  .header { background-color: DarkTurquoise; }
+  .stats { 
+    background-color: lightcyan;
+    display:inline-block;
+    float: left;
+    height: 250px;
+    padding: 20px;
+    padding-top: 100px;
+  }
+  .span_stats { 
+    background-color: lightcyan;
+    display: inline-block;
+    height: 250px;
+    text-align: center;
+    vertical-align: middle;
+  }
+  .room { 
+    background-color: #eee; 
+  }
+  .warpbody2 {
+    display:table-caption;
+    width:100%;
+  }
+  .habilities { 
+    background-color: lightskyblue; 
+    float: left;
+  }
+  .cards { 
+    background-color: plum; 
+  }
+  .foot { 
+    background-color: DarkTurquoise;
+    height: 30px;
+  }
+  #dice1 {width: 60px;  height: 60px;}
+  #dice2 {width: 60px;  height: 60px;}
+  #dice3 {width: 60px;  height: 60px;}
+  #dice4 {width: 60px;  height: 60px;}
+  #dice5 {width: 60px;  height: 60px;}
+</style>
+</head>
+<header>
+  <div class="header" > 
+    <h1>Character X</h1>
+  </div>
+</header>
+
+<body>
+  <div class="warpbody">
+    <div class="warpbody1">
+      <div class="stats" left>
+          <span class="span_stat">
+            <strong>Main Menu</strong><br />
+            <p>Health:</p>
+            <p>Attack:</p>
+            <p>Level:</p>
+          </span>
+      </div>
+      <div align="center" class="room" right>
+        <img alt="Floor 1" style="width:300px;height:250px;" src="https://boardgamegeek.com/camo/0c5442d82bce138cf50ac0736a828b7c7f3dcb0f/687474703a2f2f666330372e64657669616e746172742e6e65742f667334392f692f323030392f3231392f302f302f44756e67656f6e5f526f6f6d5f5f5f4272696467655f446e445f54696c655f62795f62696c6c69616d626162626c652e6a7067" >
+      </div>
+    </div>
+  <div class="warpbody2">
+    <div class="habilities" align="center">
+      <button type="button"  onclick="addUserInput('H1')">H1</button> 
+      <button type="button" onclick="addUserInput('H2')">H2</button> 
+      <button type="button" onclick="addUserInput('H3')">H3</button> 
+    </div>
+    <div lass="cards" align="center">
+      <button type="button" onclick="addUserInput('C1')"><img src="images/dice1.png" id="dice1" alt="C1"></button>
+      <button type="button" onclick="addUserInput('C2')"><img src="images/dice2.png" id="dice2" alt="C2"></button>
+      <button type="button" onclick="addUserInput('C3')"><img src="images/dice3.png" id="dice3" alt="C3"></button>
+      <button type="button" onclick="addUserInput('C4')"><img src="images/dice4.png" id="dice4" alt="C4"></button>
+      <button type="button" onclick="addUserInput('C5')"><img src="images/dice5.png" id="dice5" alt="C5"></button>
+      </div>
+  </div>
+</div>
+</body>
+
+<footer>
+  <div class="foot"><center>HackathonUPC</center></div>
+</footer>
+</html>
