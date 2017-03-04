@@ -1,4 +1,5 @@
 var info = require('./info').info;
+var eve = require('./events');
 
 var currentLocation = {};
 var state = {};
@@ -36,13 +37,156 @@ var newPlayerType = function(){
     return selectedType; 
 }
 
-var calculateNewState = function() {
-    switch (currentLocation.type) {
-        case monster :
-            break;
-        case treasure :
-            break;
+var calculateCombat = function(){
+    var totalDamage = 0;
+    var fighters = JSON.parse(JSON.stringify(userInputObj));
+
+    //remove not participating players in case of mimic
+    if (currentLocation.event.type == "trap"){
+        var notParticipating = [];
+        for (var id in userInputObj){
+            if (userInputObj.hasOwnProperty[id]){
+                if (userInputObj[id].numAttack == 0) notParticipating.push(id);
+            }
+        }
+        fighters = fighters.filter(function(x) { 
+            return notParticipating.indexOf(x) < 0;
+        });
     }
+
+    //calc player combat damage
+    for (var id in fighters){
+        if (fighters.hasOwnProperty[id]){
+            totalDamage += fighters[id].numAttack;
+        }
+    }
+    //apply spells (TODO)
+    if (currentLocation.event.health > totalDamage){
+        //monster lives
+        var lessDamage = Infinity;
+        for (var id in fighters){
+            if (fighters.hasOwnProperty[id]){
+                if (fighters[id].numAttack < lessDamage) lessDamage = fighters[id].numAttack;
+            }
+        }
+        for (var id in fighters){
+            if (fighters.hasOwnProperty[id]){
+                if (fighters[id].numAttack == lessDamage) {
+                    state[id].health -= currentLocation.event.attack;
+                }
+            }
+        }
+    }
+    else{
+        //monster dies
+        var mostDamage = 0;
+        for (var id in fighters){
+            if (fighters.hasOwnProperty[id]){
+                if (fighters[id].numAttack > mostDamage) mostDamage = fighters[id].numAttack;
+            }
+        }
+        for (var id in fighters){
+            if (fighters.hasOwnProperty[id]){
+                if (fighters[id].numAttack == mostDamage) {
+                    state[id].lv += currentLocation.event.lv;
+                }
+            }
+        }
+    }
+}
+
+var calculateTreasure = function(){
+    var highestRoll = 0;
+    for (var id in userInputObj){
+        if (userInputObj.hasOwnProperty[id]){
+            if (userInputObj[id].numAttack > highestRoll) highestRoll = userInputObj[id].numAttack;
+        }
+    }
+    //room has a level reward
+    if (currentLocation.type == "reward"){
+        for (var id in userInputObj){
+            if (userInputObj.hasOwnProperty[id]){
+                if (userInputObj[id].numAttack == highestRoll) {
+                    state[id].lv += currentLocation.event.lv;
+                }
+            }
+        }
+    }
+    //healing room
+    else if (currentLocation.type == "heal"){
+        for (var id in userInputObj){
+            if (userInputObj.hasOwnProperty[id]){
+                if (userInputObj[id].numAttack == highestRoll) {
+                    state[id].health = min(state[id].health + currentLocation.lv,
+                                            info[state[id].type].health);
+                }
+            }
+        }
+    }
+}
+
+var checkDeath = function(){
+    for (var id in state){
+        if (state.hasOwnProperty[id]){
+            if (state[id].health < 1){
+                io.emit("endGame", "");
+                break;
+            }
+        }
+    }
+}
+
+var sendNewState = function() {
+    //remove used attacks from current floor and clear input
+    for(var id in userInputs) {
+        //spells on cd
+
+        state[id].spells[userInputs[id].spell] = false;
+        //used cards
+        state[id].availableNums = state[id].availableNums.filter(function(x) { 
+            return userInputs[i].numAttack.indexOf(x) < 0;
+        });
+        userInputs[id] = {id : id, spell : '', numAttack : -1};
+    }
+    //advance room and floor if needed, generate new event
+    var newRoom = (currentLocation.room + 1) % 5;
+    var newFloor = currentLocation.floor + (newRoom == 0);
+    var newEvent;
+    if (newRoom == 4 && newFloor == 4) newEvent = eve.bossFight();
+    else newEvent = eve.generateEvent(newFloor);
+
+    //reset cds if new floor
+    if (newRoom == 0){
+        for(var id in state){
+            var plyertype = state[id].type;
+            state[id].spells = info[playerType].spells;
+            state[id].availableNums = info[playerType].nums;
+        }
+    }
+    currentLocation = {floor : newFloor, room : newRoom, event : newEvent};
+
+    sendState();
+}
+
+var calculateNewState = function() {
+    switch (currentLocation.event.type) {
+        case monster :
+            calculateCombat();
+            break;
+        case reward :
+            calculateTreasure();
+            break;
+        case trap :
+            calculateCombat();
+            break;
+        case heal :
+            calculateTreasure();
+            break;    
+    }
+
+    checkDeath();
+    sendNewState();
+
 }
 
 var resetGame = function() {
@@ -52,7 +196,7 @@ var resetGame = function() {
 
 var startGame = function() {
     userInputs = {};
-    currentLocation = {floor : 1, room : 1};
+    currentLocation = {floor : 0, room : 0, event : eve.generateEvent(1)};
     playing = true;
     sendState();
 }
@@ -60,7 +204,8 @@ var startGame = function() {
 var setUserInput = function(obj) {
     var id = obj.id;
     var attack = obj.attack;
-    if (attack % 1 === 0) { //attack is a card
+    var type = obj.type;
+    if (type === "attack") { //attack is a card
         userInputs[id].numAttack = attack;
     }
     else { //attack is spell
@@ -88,7 +233,7 @@ var addNewPlayer = function(obj) {
         health : info[playerType].health, 
         lv : 0, 
         spells : info[playerType].spells, 
-        avaliableNums : [1,2,3,4,5]
+        availableNums : info[playerType].nums
     };
     state[id] = newPlayerObj;
     

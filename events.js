@@ -13,38 +13,40 @@ var getMonsterImg = function() {
 
 var eventGenerator = [
     { 
-        function(floor) {
+        function : function(floor) {
             return {
                 type : "monster",
                 img : getMonsterImg(monsterImagePaths),
-                health : randomWithLv(10,15,floor),
+                health : randomWithLv(10,14,floor),
                 attack : randomWithLv(2,4,floor),
+                lv : random(2,3),
             }
         },
         apperingProb : 20
     },
     {
-        function(floor) {
+        function : function(floor) {
             return {
                 type : "trap",
                 img : getMonsterImg(easyImagePaths),
-                health : randomWithLv(7,12,floor),
+                health : randomWithLv(7,10,floor),
                 attack : randomWithLv(4,7,floor),
+                lv : random(1,2),
             }
         },
         apperingProb : 10
     },
     {
-        function(floor) {
+        function: function(floor) {
             return {
                 type : "reward",
-                lv : random(0,3) - 1,
+                lv : random(0,7) - 1,
             }
         },
         apperingProb : 10
     },
     {
-        function(floor) {
+        function : function(floor) {
             return {
                 type : "heal",
                 lv : random(0,7) - 2,
@@ -59,7 +61,19 @@ for(var i in eventGenerator) {
     maxApperingProb += eventGenerator[i].apperingProb;
 }
 
-var generateEvent  = function(params, difficulty) {
+
+var bossFight = function(){
+    return {
+                type : "monster",
+                img : getMonsterImg(easyImagePaths),
+                health : randomWithLv(14,17,5),
+                attack : randomWithLv(6,9,5),
+                lv : random(6,8),
+            }
+}
+
+
+var generateEvent  = function(floor) {
 
     var localApperingProb = maxApperingProb;
 
@@ -68,8 +82,9 @@ var generateEvent  = function(params, difficulty) {
         var eventApperincProb = eventGenerator[i].apperingProb;
         var rand = random(0, localApperingProb);
         if(rand <= eventApperincProb) {
-            return eventGenerator[i].function();
+            return eventGenerator[i].function(floor);
         }
+        eventApperincProb -= localApperingProb;
     }
 
     console.error("No event selected");
