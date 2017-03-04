@@ -1,27 +1,11 @@
 var info = require('./info').info;
 
-
-var newPlayerType = function(){
-    var available = ["paladin", "mage", "thief", "samurai"];
-    var toRemove = [];
-    //Afegeixes a toRemove els types ja pillats
-    for (var id in state){
-        if (state.hasOwnProperty[id]){
-            toRemove.push(state[id].type); 
-        }
-    }
-    //Elimines types pillats de available
-    available = available.filter(function(x) { return toRemove.indexOf(x) < 0});
-    //Tipus random dels available que quedin
-    var selectedType = available[Math.floor((Math.random() * available.length) + 1)];
-    return selectedType; 
-}
-
 var currentLocation = {};
 var state = {};
 var userInputs = {};
 var playing = false;
 
+//Should be executed before calling any io function
 var io;
 var setIo = function(newIo) {
     io = newIo;
@@ -29,6 +13,31 @@ var setIo = function(newIo) {
 
 var sendState = function() {
     io.send('state', state);
+}
+
+var newPlayerType = function(){
+    var available = ["paladin", "mage", "thief", "samurai"];
+    var toRemove = [];
+    
+    //Add to toRemove types already 
+    for (var id in state){
+        if (state.hasOwnProperty[id]){
+            toRemove.push(state[id].type); 
+        }
+    }
+
+    //Delete types that are 
+    available = available.filter(function(x) { 
+        return toRemove.indexOf(x) < 0;
+    });
+
+    //Random available
+    var selectedType = available[Math.floor((Math.random() * available.length) + 1)];
+    return selectedType; 
+}
+
+var calculateNewState = function() {
+
 }
 
 var resetGame = function() {
@@ -49,6 +58,11 @@ var setUserInput = function(obj) {
     }
     else { //attack is spell
         userInputs[id].spell = attack;
+    }
+
+    if(checkAllPlayersMoved()) {
+        calculateNewState();
+        sendState();
     }
 }
 
