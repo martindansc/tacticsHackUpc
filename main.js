@@ -4,10 +4,7 @@ var http = require('http').Server(app);
 var bodyParser = require('body-parser');
 var io = require('socket.io')(http);
 
-var state = require('state');
-
-app.set('views', __dirname + "/views");
-app.engine('html', require('ejs').renderFile);
+var state = require('./state');
 
 app.use(express.static('public'));
 
@@ -17,11 +14,6 @@ app.use(bodyParser.json());
 //Server
 http.listen(3000, function(){
  	console.log('listening on *:3000');
-});
-
-//Serve html
-app.get('/', function(req, res){
- 	res.render('index.html', {});
 });
 
 //IO
@@ -38,7 +30,5 @@ io.on('connection', function(socket){
 	//Add connection
 	// {numPlayer : 'num'}
 	var newPlayer = state.addNewPlayer(id);
-	//Send new player connection
-	socket.send(newPlayer);
 
 });
