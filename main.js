@@ -40,6 +40,6 @@ io.on('connection', function(socket){
 
 	//Add connection
 	var newPlayer = state.addNewPlayer(id);
-	socket.id('setId', id);
+	socket.emit('setId', id);
 
 });
