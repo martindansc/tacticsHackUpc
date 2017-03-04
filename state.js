@@ -37,7 +37,12 @@ var newPlayerType = function(){
 }
 
 var calculateNewState = function() {
-
+    switch (currentLocation.type) {
+        case monster :
+            break;
+        case treasure :
+            break;
+    }
 }
 
 var resetGame = function() {

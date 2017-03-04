@@ -39,7 +39,7 @@ io.on('connection', function(socket){
 	});
 
 	//Add connection
-	// {numPlayer : 'num'}
 	var newPlayer = state.addNewPlayer(id);
+	socket.id('setId', id);
 
 });
