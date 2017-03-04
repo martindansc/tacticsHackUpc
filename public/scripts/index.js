@@ -10,8 +10,8 @@ socket.on('connection', function(){
 }); 
 
 //state
-user_input = function(type, num) {
-    socket.emit('addUserInput', {type : type, num : num});
+addUserInput = function(type, num) {
+    socket.emit('addUserInput', {type : type, attack : num});
 }
 
 reset_game = function(obj) {
