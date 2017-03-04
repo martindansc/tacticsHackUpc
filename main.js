@@ -16,6 +16,8 @@ http.listen(3000, function(){
  	console.log('listening on *:3000');
 });
 
+state.setIo(io);
+
 //IO
 io.on('connection', function(socket){
 	
@@ -25,6 +27,15 @@ io.on('connection', function(socket){
 	socket.on('addUserInput', function(obj){
 		obj.playerId = id;
 		state.setUserInput(obj);
+	});
+
+	//Get the user input
+	socket.on('resetGame', function(obj){
+		state.resetGame();
+	});
+
+	socket.on('disconnect', function() {
+		if(!state.playing) state.deletePlayer(id);	
 	});
 
 	//Add connection
