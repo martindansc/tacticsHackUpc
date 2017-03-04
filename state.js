@@ -12,7 +12,7 @@ var setIo = function(newIo) {
 }
 
 var sendState = function() {
-    io.send('state', state);
+    io.send('state', {state : state, currentLocation : currentLocation});
 }
 
 var newPlayerType = function(){
@@ -47,11 +47,13 @@ var calculateNewState = function() {
 
 var resetGame = function() {
     state = {};
+    playing = false;
 }
 
 var startGame = function() {
     userInputs = {};
     currentLocation = {floor : 1, room : 1};
+    playing = true;
     sendState();
 }
 

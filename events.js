@@ -60,11 +60,19 @@ for(var i in eventGenerator) {
 }
 
 var generateEvent  = function(params, difficulty) {
+
+    var localApperingProb = maxApperingProb;
+
     //get one random event
-    var rand = random();
     for(var i in eventGenerator) {
-        maxApperingProb += eventGenerator[i].apperingProb;
+        var eventApperincProb = eventGenerator[i].apperingProb;
+        var rand = random(0, localApperingProb);
+        if(rand <= eventApperincProb) {
+            return eventGenerator[i].function();
+        }
     }
+
+    console.error("No event selected");
 }
 
 exports.generateEvent = generateEvent;
