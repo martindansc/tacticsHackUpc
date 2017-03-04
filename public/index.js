@@ -1,16 +1,19 @@
 //-- JS --
 var myId;
+var myClass;
 
 //init
 var socket = io();
 
-socket.emit('set_id', myID);
+socket.on('connection', function(){
+    myId = socket.io.engine.id;
+}); 
 
 //state
-user_input = function(obj) {
-    var info = {
-        playerID : myId,
-        input : obj
-    }
-    socket.emit('addUserInput', info);
+user_input = function(obj) {ç
+    socket.emit('addUserInput', obj);
+}
+
+reset_game = function(obj) {
+    socket.emit('reset_game','');
 }
